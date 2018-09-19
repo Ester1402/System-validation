@@ -72,139 +72,87 @@ The requirements of each component will be enumerate a continuation
 The system has 4 elements that can have interactions; Robots R1, R2, Stack, Airlock, light and Robot R3.
 \begin{itemize}
 \item Robots R1, R2
+
+
+The main function of the robots R1 and R2 is to pick up or drop the wafer in the input and/or output stacks and transport the wafer between the stacks and the airlock doors.
+In this case with the main objective of simplify the process both robots are going to be modeled with the same characteristics and requirements and they are not going to interact between them.  R1 will only be in contact with the input and output stacks 1 and the A1 .
+The robot 2 , therefore, will be interacting with the door and stacks 2.
+
+
+With respect to the wafer stacks the interactions that the robot will have with the stacks with the use of sensors are the following ones
 \begin{itemize}
-\item{pick a wafer}
-\item{drop a wafer}
-\item{go to input}
-\item{go to output}
-\item{go to airlock}
-\item{request door open}
-\item{ask for stack status}
-\item{check door status}
+\item{ need to go to the input stack and pick a wafer} 
+\item{need to go to the output stack and drop a wafer}
+\item{ask for stack status periodically and check if they are full or empty}
 \end{itemize}
+
+With respect to the transfer of the wafer from/to the airlock the robots should do the following interactions internally and with the airlock sensors
+\begin{itemize}
+\item{go to airlock if the door is opening and a wafer should be pick to drop in the output stack }
+\item{request door open: a wafer is needed to deliver to the airlock }
+\item{check door status periodically: open and/or close}
+\end{itemize}
+
 \item Stack
+
+
+The stack only has to communicate with the robots R1 and R2. The communication will consist in checking the status of the stack and sending the robot where it can put or take a wafer.
 \begin{itemize}
 \item{ send status (Take me or Go away) }
 \end{itemize}
 \item Airlock
+The airlock interactions is complex, that's because it communicates with the robots outside and the inside robot too. Also it have the restriction that inside door (Din) and outside door (Dout) can't be open at the same time, so it has to keep track of the doors status. 
+The interaction between the robot and the airlocks is a communication regarding the status of the doors. At first it receives a request from robots to open the door, when it is open it will send the status of the door and the airlock to the robot so the robot can take or put a wafer.  
 \begin{itemize}
-\item{ open door}
-\item{ close door}
-\item{ check door status}
-\item{ send door status}
-\item{ airlock stuff (creates vacuum)}
+\item{ request open door received, proceed to open door}
+\item{ check door status to prevent any problem and confirm it is completely open}
+\item{ send door status (open/close) and airlock status (wafer/not wafer) }
+\item{ close the door}
 \item{check if wafer present}
-\item check if robot present
+
 \end{itemize}
+
 \item Robot R3
+The main function of robot R3 is to pick the wafer from the airlock and take it to the light, once the light is ready deliver back to the airlock. Therefore, robot R3 should interact with the light and both airlocks whose following interactions are described below:
 \begin{itemize}
-\item{Pick/place wafer }
-\item{Request door open}
-\item{Check lamp status}
-\item{ Check door status}
+\item{Pick/place wafer in the airlock. }
+\item{Request door open when a wafer has already been processed in the light.}
+\item{Check lamp status, if it is ready place a wafer on it, once finish, return the wafer to the airlock available}
+\item{ Check door status and airlock status, if door is open and airlock empty a wafer can be placed if the airlock is working R3 wait and checks the status of the other airlock.}
 \end{itemize}
 \end{itemize}
+
 \begin{itemize}
  
-\item Light
+\item Light 
+
+The light should mainly interact with itself as it has to sense if there is a wafer inside and send an end of processing signal .
+
 \begin{itemize}
- \item check if wafer present
-\item lamp stuff (UV light on/off)
+ \item check if  a wafer is  present
+\item lamp light turn on or off
 \item check for error
-\item send status
+\item send status  to teh robot R3 
 \end{itemize}
+
 \end{itemize}
 \subsection{Architecture}
+
+The complete scheme of the interactions between the different controllers is depicted in the following picture:
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{Block_diagram.pdf}
+    \caption{Complete system block interactions.}
+    \label{fig:complete}
+\end{figure}
+
 The lamp system is described in the picture \ref{fig:Lamp_architecture}
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.45\textwidth]{lamp.pdf}
     \caption{Lamp architecture}
     \label{fig:Lamp_architecture}
 \end{figure}
-%Briefly describe and show graphs of the performance of your baseline implementation.
-\subsection{Discussion}
 
-%Briefly discuss / conclude peculiarities about this benchmark.
-
-\section{Matrix multiplication}
-\subsection{Description}
-This benchmark tests the serial performance of a naive serial matrix multiplication that runs in $O(n^3)$ for square matrices with n columns. It will be used to compare the speed.
-%Briefly describe this benchmark.
-
-\subsection{Estimation}
-
-%Briefly describe an estimation about the performance of matrix multiplication w.r.t. the vector baseline benchmark.
-\subsection{Profile}
-Briefly describe and show graphs of the performance of your baseline implementation.
-\subsection{Discussion}
-Briefly discuss / conclude peculiarities about this benchmark.
-
-\section{SIMD extensions}
-\subsection{Description}
-SIMD is a type of computing technique focused on performing tasks in a quicker way. This benchmark uses vector operations so you can use 1 instruction to perform multiple operations.  
-%Briefly describe this benchmark.
-\subsection{Profile}
-Briefly describe and show graphs of the performance of your baseline implementation.
-\subsection{Estimation}
-Briefly describe what improvements you can make based on the profile, and how much benefit it will give (in terms of e.g. speedup, throughput).
-\subsection{Design and implementation}
-Briefly describe all discrete improvements that you've made.
-\subsubsection{Improvement X}
-Your description goes here.
-\subsubsection{Improvement Y}
-\subsection{Results after improvement}
-Briefly show the results after improvements.
-\subsubsection{Results after improvement X}
-\subsubsection{Results after improvement Y}
-\subsection{Discussion}
-Briefly discuss / conclude your work on this benchmark.
-
-\section{OpenMP}
-\subsection{Description}
-Open Multi-Processing (OpenMP) is commonly. 
-%Briefly describe this benchmark.
-\subsection{Profile}
-Briefly describe and show graphs of the performance of your baseline implementation.
-\subsection{Estimation}
-Briefly describe what improvements you can make based on the profile, and how much benefit it will give (in terms of e.g. speedup, throughput).
-\subsection{Design and implementation}
-Briefly describe all discrete improvements that you've made.
-\subsubsection{Improvement X}
-\subsubsection{Improvement Y}
-\subsection{Results after improvement}
-Briefly show the results after improvements.
-\subsubsection{Results after improvement X}
-\subsubsection{Results after improvement Y}
-\subsection{Discussion}
-Briefly discuss / conclude your work on this benchmark.
-
-\section{OpenCL}
-\subsection{Description}
-Briefly describe this benchmark.
-\subsection{Profile}
-Briefly describe and show graphs of the performance of your baseline implementation.
-\subsection{Estimation}
-Briefly describe what improvements you can make based on the profile, and how much benefit it will give (in terms of e.g. speedup, throughput).
-\subsection{Design and implementation}
-Briefly describe all discrete improvements that you've made.
-\subsubsection{Improvement X}
-In the first version, compilation of the OpenCL program happened inside the matrix multiplication function. This compilation time took 0.3 seconds, giving lots of overhead. As an improvement, the code should be compiled once and the compiled program should be reused afterwards. Then, the only overhead is copying the Matrix from CPU memory to GPU memory.
-\subsubsection{Improvement Y}
-\subsection{Results after improvement}
-Briefly show the results after improvements.
-\subsubsection{Results after improvement X}
-\subsubsection{Results after improvement Y}
-\subsection{Discussion}
-Briefly discuss / conclude your work on this benchmark.
-
-\section{Conclusion}
-
-\begin{thebibliography}{}
-\bibitem{SomeReference} 
-Some Author
-\textit{Some Title}
-Some Information about how to find this reference.
-\end{thebibliography}
 
 \end{document}
